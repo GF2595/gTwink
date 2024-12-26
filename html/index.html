@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GyverTwink web</title>
+    <link rel="stylesheet" href="pico.min.css" />
+    <link rel="stylesheet" href="main.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>GyverTwink</h1>
+      <div class="formitem">
+        <label for="k">LED power</label>
+        <input type="checkbox" role="switch" id="power" />
+      </div>
+      <div class="divider"></div>
+      <button id="next_eff" onclick="buttonClick(this)">
+        Следующий эффект
+      </button>
+      <div class="divider"></div>
+      <div>
+        <label>Brightness</label>
+        <input type="range" id="brightness" />
+      </div>
+      <div>
+        <label>Effect</label>
+        <select id="effect"></select>
+      </div>
+      <div>
+        <label>Scale</label>
+        <input type="range" id="scale" />
+      </div>
+      <div class="formitem">
+        <label>Direction</label>
+        <input type="checkbox" role="switch" id="direction" />
+      </div>
+      <div>
+        <label>Speed</label>
+        <input type="range" id="speed" />
+      </div>
+    </div>
+    <script type="text/javascript" src="main.js"></script>
+  </body>
+</html>

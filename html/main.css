@@ -1,0 +1,34 @@
+body {
+  padding: 20px;
+}
+
+.container {
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.container div {
+  /* flex-grow: 1; */
+  width: 100%;
+}
+
+.formitem {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.divider {
+  border: 1px var(--pico-secondary-border) solid;
+}
+
+[type="range"] {
+  width: 100%;
+}
+
+label::after {
+  content: ": ";
+}
