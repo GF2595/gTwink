@@ -3,16 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GyverTwink web</title>
+    <title>gTwink web</title>
     <link rel="stylesheet" href="pico.min.css" />
     <link rel="stylesheet" href="main.css" />
   </head>
   <body>
     <div class="container">
-      <h1>GyverTwink</h1>
+      <h1>gTwink (pre-alpha)</h1>
       <div class="formitem">
         <label for="k">LED power</label>
-        <input type="checkbox" role="switch" id="power" />
+        <input
+          disabled
+          type="checkbox"
+          role="switch"
+          id="power"
+          onchange="powerToggle(this)"
+        />
       </div>
       <div class="divider"></div>
       <button id="next_eff" onclick="buttonClick(this)">
@@ -21,23 +27,30 @@
       <div class="divider"></div>
       <div>
         <label>Brightness</label>
-        <input type="range" id="brightness" />
+        <input
+          disabled
+          type="range"
+          id="brightness"
+          min="0"
+          max="248"
+          onchange="brightnessChange(this)"
+        />
       </div>
       <div>
         <label>Effect</label>
-        <select id="effect"></select>
+        <select disabled id="effect" onchange="changeEffect(this)"></select>
       </div>
       <div>
         <label>Scale</label>
-        <input type="range" id="scale" />
+        <input disabled type="range" id="scale" />
       </div>
       <div class="formitem">
         <label>Direction</label>
-        <input type="checkbox" role="switch" id="direction" />
+        <input disabled type="checkbox" role="switch" id="direction" />
       </div>
       <div>
         <label>Speed</label>
-        <input type="range" id="speed" />
+        <input disabled type="range" id="speed" />
       </div>
     </div>
     <script type="text/javascript" src="main.js"></script>

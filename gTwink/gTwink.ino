@@ -31,26 +31,31 @@
 // имя точки в режиме AP
 #define GT_AP_SSID "GyverTwink"
 #define GT_AP_PASS "12345678"
-//#define DEBUG_SERIAL_GT   // раскомментируй, чтобы включить отладку
+#define DEBUG_SERIAL_GT   // раскомментируй, чтобы включить отладку
 
 // ================== LIBS ==================
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
-#include <SimplePortal.h>
+// #include <SimplePortal.h>
 #include <FastLED.h>
 #include <EEManager.h>
 #include <EncButton.h>
 #include "palettes.h"
 #include "Timer.h"
+#include "ESPAsyncTCP.h"
+#include "ESPAsyncWebServer.h"
+#include "FS.h"
 
 // ================== OBJECTS ==================
-WiFiServer server(80);
+// WiFiServer wifiServer(81);
 WiFiUDP udp;
-EEManager EEwifi(portalCfg);
+// EEManager EEwifi(portalCfg);
 CRGB leds[LED_MAX];
 CLEDController *strip;
 EncButton<EB_TICK, BTN_PIN> btn;
 IPAddress myIP;
+
+AsyncWebServer server(80);
 
 // ================== EEPROM BLOCKS ==================
 struct Cfg {
@@ -105,6 +110,7 @@ byte forceEff = 0;
 #define DEBUG(x)
 #endif
 
+
 // ================== SETUP ==================
 void setup() {
 #ifdef DEBUG_SERIAL_GT
@@ -117,14 +123,16 @@ void setup() {
   EEPROM.begin(2048); // с запасом!
 
   // если это первый запуск или щелчок по кнопке, открываем портал
-  if (EEwifi.begin(0, 'a') || checkButton()) portalRoutine();
+  // if (EEwifi.begin(0, 'a') || checkButton()) portalRoutine();
 
   // создаём точку или подключаемся к AP
-  if (portalCfg.mode == WIFI_AP || (portalCfg.mode == WIFI_STA && portalCfg.SSID[0] == '\0')) setupAP();
-  else setupSTA();
+  // if (portalCfg.mode == WIFI_AP || (portalCfg.mode == WIFI_STA && portalCfg.SSID[0] == '\0')) setupAP();
+  // else 
+  setupSTA();
   DEBUGLN(myIP);
 
-  EEcfg.begin(EEwifi.nextAddr(), 'a');
+  EEcfg.begin(0, 'a');
+  // EEcfg.begin(EEwifi.nextAddr(), 'a');
   EEeff.begin(EEcfg.nextAddr(), 'a');
   EEmm.begin(EEeff.nextAddr(), (uint8_t)LED_MAX);
   EExy.begin(EEmm.nextAddr(), (uint8_t)LED_MAX);
@@ -135,6 +143,29 @@ void setup() {
   cfg.turnOff = false;
   strip->setLeds(leds, cfg.ledAm);
   udp.begin(8888);
+
+  if(!SPIFFS.begin()){
+    DEBUGLN("An Error has occurred while mounting SPIFFS");
+    return;
+  }
+
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/index.html", "text/html");
+  });
+  server.on("/pico.min.css", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/pico.min.css", "text/css");
+  });
+  server.on("/main.css", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/main.css", "text/css");
+  });
+  server.on("/main.js", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/main.js", "text/javascript");
+  });
+  server.on("/changeEffect", HTTP_GET, [](AsyncWebServerRequest *request){
+    switchEff();
+    request->send(200);
+  });
+  server.begin();
 }
 
 // ================== LOOP ==================
